@@ -6,19 +6,19 @@
                 <img src="../assets/logo.png" alt="">
             </div>
             <!-- 登录表单区 -->
-            <el-form :model="loginForm" class="login_form"  label-width="0px">
+            <el-form :model="loginForm" :rules="loginFormRules"  ref="loginFormRef" class="login_form"  label-width="0px">
                 <!-- 用户名 -->
-                <el-form-item >
+                <el-form-item prop="username">
                     <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
                 </el-form-item>
                 <!-- 密码 -->
-                <el-form-item>
+                <el-form-item prop="password">
                     <el-input type="password" v-model="loginForm.password" prefix-icon="iconfont icon-3702mima"></el-input>
                 </el-form-item>
                 <!-- 按钮区域 -->
                 <el-form-item class="btns">
-                    <el-button type="primary">登录</el-button>
-                    <el-button type="info">重置</el-button>
+                    <el-button type="primary" @click="login()">登录</el-button>
+                    <el-button @click="resetLoginForm()" type="info">重置</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -31,9 +31,45 @@ export default {
         return {
             // 登录表单数据绑定对象
             loginForm:{
-                username:"123",
-                password:"123",
+                username:"admin",
+                password:"123456",
+            },
+            //验证规则对象
+            loginFormRules:{
+                username:[
+                    { required: true, message: '请输入登录名称', trigger: 'blur' },
+                    { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+                ],
+                password:[
+                    { required: true, message: '请输入登录密码', trigger: 'blur' },
+                    { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+                ]
             }
+        }
+    },
+    methods:{
+        login() {
+            this.$refs.loginFormRef.validate(async valid => {
+                if (!valid) {
+                    console.log('error submit!!');
+                    return ;
+                }
+                //发起登录请求
+                const {data: res} = await this.$http.post('login',this.loginForm);
+                console.log(res);
+                if(res.meta.status !== 200){
+                    this.$message.error('登录失败');
+                    return;
+                }
+                this.$message.success('登录成功');
+                //记录到sessionStorage
+                window.sessionStorage.setItem("token",res.data.token);
+                //页面的跳转
+                this.$router.push("/home");
+            });
+        },
+        resetLoginForm() {
+            this.$refs.loginFormRef.resetFields();
         }
     }
 }
