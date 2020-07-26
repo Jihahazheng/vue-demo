@@ -10,7 +10,27 @@
         </el-header>
         <el-container>
             <!-- 侧边栏 -->
-            <el-aside width="200px">Aside</el-aside>
+            <el-aside width="200px">
+                <!-- 侧边栏菜单区 -->
+                <el-menu
+                    background-color="#333744"
+                    text-color="#fff"
+                    active-text-color="#ffd04b"
+                >
+                    <el-submenu index="1">
+                        <template slot="title">
+                            <i class="el-icon-location"></i>
+                            <span>导航一</span>
+                        </template>
+                        <el-menu-item index="1-4-1">
+                            <template slot="title">
+                                <i class="el-icon-location"></i>
+                                <span>子导航</span>
+                            </template>
+                        </el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </el-aside>
             <!-- 右侧内容主题 -->
             <el-main>Main</el-main>
         </el-container>
