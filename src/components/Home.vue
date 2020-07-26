@@ -15,16 +15,15 @@
                 <el-menu
                     background-color="#333744"
                     text-color="#fff"
-                    active-text-color="#ffd04b"
+                    active-text-color="#409eff"
+                    unique-opened
                 >
                     <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
                         <template slot="title">
-                            <i class="el-icon-location"></i>
                             <span>{{item.authName}}</span>
                         </template>
                         <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
                             <template slot="title">
-                                <i class="el-icon-location"></i>
                                 <span>{{subItem.authName}}</span>
                             </template>
                         </el-menu-item>
@@ -89,5 +88,10 @@ export default {
 .el-main{
     background-color: #eaedf1;
 }
-
+.el-menu{
+    border-right: none;
+} 
+.el-submenu{
+    margin-left: 15px;
+}
 </style>
