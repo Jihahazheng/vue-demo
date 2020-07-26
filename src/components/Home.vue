@@ -20,13 +20,16 @@
                     unique-opened
                     :collapse="isCollapse"
                     :collapse-transition= "false"
+                    router
+                    :default-active="activePath"
                 >
                     <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
                         <template slot="title">
                             <i class="el-icon-menu"></i>
                             <span>{{item.authName}}</span>
                         </template>
-                        <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+                        <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id"
+                        @click="saveNavState('/'+subItem.path)">
                             <template slot="title">
                                 <span>{{subItem.authName}}</span>
                             </template>
@@ -35,7 +38,10 @@
                 </el-menu>
             </el-aside>
             <!-- 右侧内容主题 -->
-            <el-main>Main</el-main>
+            <el-main>
+                <!-- 路由占位符 -->
+                <router-view></router-view>
+            </el-main>
         </el-container>
     </el-container>
 </template>
@@ -48,10 +54,14 @@ export default {
             menuList:[],
             //是否折叠菜单
             isCollapse:false,
+            //被激活的链接地址
+            activePath:'',
         }
     },
+    //生命周期函数
     created(){
         this.getMenuList();
+        this.activePath = window.sessionStorage.getItem("activePath");
     },
     methods:{
         logout(){
@@ -69,6 +79,11 @@ export default {
         //点击按钮，切换菜单折叠展开
         toggleCollapse(){
             this.isCollapse = !this.isCollapse;
+        },
+        // 保存链接的激活状态
+        saveNavState(activePath){
+            window.sessionStorage.setItem("activePath",activePath);
+            this.activePath = activePath;
         }
     },
 
