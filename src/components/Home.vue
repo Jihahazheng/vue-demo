@@ -10,16 +10,20 @@
         </el-header>
         <el-container>
             <!-- 侧边栏 -->
-            <el-aside width="200px">
+            <el-aside :width="isCollapse?'64px':'200px'">
+                <div class="toggle-button" @click="toggleCollapse">|||</div>
                 <!-- 侧边栏菜单区 -->
                 <el-menu
                     background-color="#333744"
                     text-color="#fff"
                     active-text-color="#409eff"
                     unique-opened
+                    :collapse="isCollapse"
+                    :collapse-transition= "false"
                 >
                     <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
                         <template slot="title">
+                            <i class="el-icon-menu"></i>
                             <span>{{item.authName}}</span>
                         </template>
                         <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
@@ -41,7 +45,9 @@ export default {
     data(){
         return {
             //左侧菜单数据
-            menuList:[]
+            menuList:[],
+            //是否折叠菜单
+            isCollapse:false,
         }
     },
     created(){
@@ -59,6 +65,10 @@ export default {
                 return this.$message.error(res.meta.msg);
             }
             this.menuList = res.data;
+        },
+        //点击按钮，切换菜单折叠展开
+        toggleCollapse(){
+            this.isCollapse = !this.isCollapse;
         }
     },
 
@@ -91,7 +101,13 @@ export default {
 .el-menu{
     border-right: none;
 } 
-.el-submenu{
-    margin-left: 15px;
+.toggle-button{
+    background-color: #4a5064;
+    font-size: 10px;
+    line-height: 24px;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.2em;
+    cursor: pointer;
 }
 </style>
