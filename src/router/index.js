@@ -22,5 +22,19 @@ const routes = [
 const router = new VueRouter({
   routes
 })
+//路由守卫，鉴权
+router.beforeEach((to,from,next)=>{
+  if(to.path==="/login"){
+    return next();
+  }
+  const tokenStr =window.sessionStorage.getItem('token');
+  if(!tokenStr){
+    //强制跳转
+    return next('/login');
+  }
+
+  return next();
+
+})
 
 export default router
