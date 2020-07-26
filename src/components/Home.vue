@@ -10,22 +10,25 @@
         </el-header>
         <el-container>
             <!-- 侧边栏 -->
-            <el-aside width="200px">
+            <el-aside :width="isCollapse?'64px':'200px'">
+                <div class="toggle-button" @click="toggleCollapse">|||</div>
                 <!-- 侧边栏菜单区 -->
                 <el-menu
                     background-color="#333744"
                     text-color="#fff"
-                    active-text-color="#ffd04b"
+                    active-text-color="#409eff"
+                    unique-opened
+                    :collapse="isCollapse"
+                    :collapse-transition= "false"
                 >
-                    <el-submenu index="1">
+                    <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
                         <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span>导航一</span>
+                            <i class="el-icon-menu"></i>
+                            <span>{{item.authName}}</span>
                         </template>
-                        <el-menu-item index="1-4-1">
+                        <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
                             <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>子导航</span>
+                                <span>{{subItem.authName}}</span>
                             </template>
                         </el-menu-item>
                     </el-submenu>
@@ -39,12 +42,36 @@
 
 <script>
 export default {
+    data(){
+        return {
+            //左侧菜单数据
+            menuList:[],
+            //是否折叠菜单
+            isCollapse:false,
+        }
+    },
+    created(){
+        this.getMenuList();
+    },
     methods:{
         logout(){
             window.sessionStorage.removeItem("token");
             this.$router.push("/login");
+        },
+        //获取菜单
+        async getMenuList(){
+            const {data:res} = await this.$http.get('menus');
+            if(res.meta.status !==200){
+                return this.$message.error(res.meta.msg);
+            }
+            this.menuList = res.data;
+        },
+        //点击按钮，切换菜单折叠展开
+        toggleCollapse(){
+            this.isCollapse = !this.isCollapse;
         }
-    }
+    },
+
 }
 </script>
 
@@ -71,5 +98,16 @@ export default {
 .el-main{
     background-color: #eaedf1;
 }
-
+.el-menu{
+    border-right: none;
+} 
+.toggle-button{
+    background-color: #4a5064;
+    font-size: 10px;
+    line-height: 24px;
+    color: #fff;
+    text-align: center;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+}
 </style>
