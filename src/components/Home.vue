@@ -20,13 +20,14 @@
                     unique-opened
                     :collapse="isCollapse"
                     :collapse-transition= "false"
+                    router
                 >
                     <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
                         <template slot="title">
                             <i class="el-icon-menu"></i>
                             <span>{{item.authName}}</span>
                         </template>
-                        <el-menu-item :index="subItem.id+''" v-for="subItem in item.children" :key="subItem.id">
+                        <el-menu-item :index="'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
                             <template slot="title">
                                 <span>{{subItem.authName}}</span>
                             </template>
@@ -35,7 +36,10 @@
                 </el-menu>
             </el-aside>
             <!-- 右侧内容主题 -->
-            <el-main>Main</el-main>
+            <el-main>
+                <!-- 路由占位符 -->
+                <router-view></router-view>
+            </el-main>
         </el-container>
     </el-container>
 </template>
