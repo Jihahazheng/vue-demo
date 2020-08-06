@@ -72,7 +72,7 @@
                             <el-button type="text" @click="showEditDialog(scope.row.id)" size="small">修改</el-button>
                         </el-tooltip>
                         <el-tooltip class="item" effect="dark" content="删除" placement="top" :enterable="false">
-                            <el-button type="text" size="small">删除</el-button>
+                            <el-button @click="removeById(scope.row.id)" type="text" size="small">删除</el-button>
                         </el-tooltip>
                         <el-tooltip class="item" effect="dark" content="设置(分配角色)" placement="top" :enterable="false">
                             <el-button type="text" size="small">设置</el-button>
@@ -316,13 +316,32 @@ export default {
                     this.getUserList();
                     return;
                 }
-                
             })
         },
         //监听修改用户对话框的关闭事件
         editDialogCloased(){
             this.$refs.editFormRef.resetFields();
         },
+        //删除用户
+        removeById(id){
+            this.$confirm('是否删除用户?', '', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(async () => {
+                const {data:res} = await this.$http.delete(`users/${id}`);
+                if(res.meta.status !== 200){
+                    //操作失败
+                    return this.$message.error(`删除用户失败,${res.meta.msg}`);
+                }
+                //重新获取用户列表数据
+                this.getUserList();
+                this.$message({
+                    type: 'success',
+                    message: '删除成功!'
+                });
+            });
+        }
     }
 }
 </script>
