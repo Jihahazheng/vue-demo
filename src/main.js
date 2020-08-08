@@ -13,7 +13,6 @@ axios.defaults.baseURL="http://127.0.0.1:8888/api/private/v1/"
 //添加axios请求拦截器，添加token
 axios.interceptors.request.use(config=>{
   config.headers.Authorization = window.sessionStorage.getItem('token');
-  console.log(config);
   return config;
 })
 // 挂载原型属性
