@@ -12,12 +12,12 @@
             <el-row :gutter='15'>
                 <el-col :span="5">
                     <el-input placeholder="请输入内容"
-                    v-model="queryInfo.query"
-                    clearable
-                    @clear="getUserList"
-                    >
-                    <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
-                </el-input>
+                        v-model="queryInfo.query"
+                        clearable
+                        @clear="getUserList"
+                        >
+                        <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
+                    </el-input>
                 </el-col>
                 <el-col :span="4">
                     <el-button type="primary" @click="addDialogVisible = true">添加用户</el-button>
