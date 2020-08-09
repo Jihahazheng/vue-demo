@@ -59,10 +59,11 @@
                             </el-checkbox-group>
                         </el-form-item>
                     </el-tab-pane>
-                    <el-tab-pane label="商品属性" name="2">商品属性</el-tab-pane>
+                    <el-tab-pane label="商品属性" name="2">
                         <el-form-item :label="item.attr_name" :key="item.attr_id" v-for="item in onlyTableData">
                             <el-input v-model="item.attr_vals"></el-input>
                         </el-form-item>
+                    </el-tab-pane>
                     <el-tab-pane label="商品图片" name="3">
                         <!-- aciton：图片上传地址 -->
                         <el-upload
@@ -78,7 +79,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="商品内容" name="4">
                         <quill-editor v-model="addForm.goods_introduce"></quill-editor>
-                        <el-button type="primary" class="btnAdd">添加商品</el-button>
+                        <el-button type="primary" class="btnAdd" @click="add" >添加商品</el-button>
                     </el-tab-pane>
                 </el-tabs>
             </el-form>
@@ -95,6 +96,9 @@
 
 
 <script>
+
+import _ from 'lodash';
+
 export default {
     data(){
         return {
@@ -108,6 +112,7 @@ export default {
                 pics:[],//图片路径数组
                 //商品详情描述
                 goods_introduce:"",
+                attrs:[],
             },
             addFormRules:{
                 goods_name:[
@@ -210,14 +215,6 @@ export default {
                 return;
             }
         },
-        //预览图片
-        handlePreview(){
-
-        },
-        //删除图片
-        handleRemove(){
-
-        },
         //上传图片成功，触发函数
         handleSuccess(response, file, fileList){
             const picInfo = { pic:response.data.tmp_path};
@@ -234,6 +231,48 @@ export default {
             console.log(file);
             this.previewPath=file.response.data.url;
             this.preViewVisible =true;
+        },
+        //添加商品
+        add(){
+            this.$refs.addFormRef.validate(async valid=>{
+                if(!valid){
+                    return this.$message.error(`请填写必要的表单项`);
+                }
+                
+                //深拷贝
+                const form = _.cloneDeep(this.addForm);
+                form.goods_cat = form.goods_cat.join(",");
+
+                //处理动态参数和静态属性
+                this.manyTableData.forEach(item =>{
+                    const newInfo = {
+                        "attr_id":item.attr_id,
+                        "attr_value":item.attr_vals.join(' ')
+                    }
+                    this.addForm.attrs.push(newInfo);
+                });
+
+                this.onlyTableData.forEach(item =>{
+                    const newInfo = {
+                        "attr_id":item.attr_id,
+                        "attr_value":item.attr_vals
+                    }
+                    this.addForm.attrs.push(newInfo);
+                });
+                
+                form.attrs = this.addForm.attrs;
+
+                console.log(form);
+                //添加商品
+                const {data:res} = await this.$http.post(`goods`,form);
+                if(res.meta.status !== 201){
+                    //操作失败
+                    return this.$message.error(`添加商品失败,${res.meta.msg}`);
+                }else{
+                    this.$message.success(`添加商品成功`);
+                    this.$router.push(`/goods`);
+                }
+            });
         }
     }
 }
